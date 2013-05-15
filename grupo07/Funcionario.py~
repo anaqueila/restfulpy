@@ -1,14 +1,17 @@
 #encoding:utf-8
 
 class Funcionario(object):
+    def cadastrar(self,db):
+        codigo = "0002"
+        nome = "filipe"
+        endereco = "arantes"
+        sexo = "m"
+        datanascimento = "00/00/0000"
+        
+        sql = "INSERT INTO funcionarios (codigoFuncionario,nome,endereco,sexo,datanascimento) VALUES('%s','%s','%s','%s','%s')" %(codigo,nome,endereco,sexo,datanascimento)
 
-    def cadastrarFuncionario(self):
-        return "cadastrar"     
+        #sql = "INSERT INTO funcionarios VALUES(0,'0001'filipe','arantes','m','00/00/00')"
+
+        c = db.execute(sql)
         
-    def consultarFuncionario(self):
-        return "consultar"
-        
-    def deletarFuncionario(self):
-        return "deletar"
-        
-    
+        return "Ok"

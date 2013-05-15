@@ -50,12 +50,13 @@ def formConsultarFuncionario():
 def consultarFuncionario(db):
     codigo = request.forms.get("codigo")
     
-    sql = "SELECT * FROM funcionarios WHERE codigoFuncionario='%s'" %codigo
-    c = db.execute(sql)
+
+    c = db.execute('SELECT * FROM funcionarios WHERE codigoFuncionario = ?',(codigo,))
     if c.fetchone():
         f = c.fetchone()
-#        print f['nome']
+        print f['nome']
         return template("exibirFuncionario", codigoFuncionario=f["codigoFuncionario"], nome=f["nome"], endereco=f["endereco"], sexo=f["sexo"], datanascimento=f["datanascimento"])
+#        return template("exibirFuncionario", sql2=sql)
     
 
 #Tela para deletar funcionario
