@@ -11,4 +11,4 @@ def show(db, post_id):
     print row['usuario']
     return template('show_post', usuario=row['usuario'], password=row['password'])
 
-run(reloader=True, debug=True, host="localhost", port=8007)
+run(debug=True, host="localhost", port=8007)

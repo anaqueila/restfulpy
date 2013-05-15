@@ -2,8 +2,9 @@
 
 from bottle import route, install, template, run, get, post, request
 from bottle_sqlite import SQLitePlugin
+from ludibrio import Mock, Dummy
 
-install(SQLitePlugin(dbfile='funcionarios.db'))
+install(SQLitePlugin(dbfile='funcionarios.db',keyword='dbfun'))
 
 #Tela para cadastrar Funcionario
 @get("/cadastrar")
@@ -20,7 +21,7 @@ def formCadasdastrarFuncionario():
 
 #Cadastrar funcinario    
 @post("/cadastrar")
-def cadasdastrarFuncionario(db):
+def cadasdastrarFuncionario(dbfun):
     codigo = request.forms.get("codigo")
     nome = request.forms.get("nome")
     endereco = request.forms.get("endereco")
@@ -28,12 +29,12 @@ def cadasdastrarFuncionario(db):
     datanascimento = request.forms.get("datanascimento")
     
     sql = "SELECT codigoFuncionario FROM funcionarios WHERE codigoFuncionario='%s'" %codigo
-    c = db.execute(sql)
+    c = dbfun.execute(sql)
     if c.fetchone():
         return "Um funcionário já possui este código!"  
     else:
         sql = "INSERT INTO funcionarios (codigoFuncionario,nome,endereco,sexo,datanascimento) VALUES('%s','%s','%s','%s','%s')" %(codigo,nome,endereco,sexo,datanascimento)
-        c = db.execute(sql)
+        c = dbfun.execute(sql)
         return "Funcionário cadastrado!"
         
 #Tela para consultar funcionario        
@@ -47,16 +48,16 @@ def formConsultarFuncionario():
 
 #Consultar funcionario  
 @post("/consultar")
-def consultarFuncionario(db):
+def consultarFuncionario(dbfun):
     codigo = request.forms.get("codigo")
-    
 
-    c = db.execute('SELECT * FROM funcionarios WHERE codigoFuncionario = ?',(codigo,))
-    if c.fetchone():
-        f = c.fetchone()
-        print f['nome']
-        return template("exibirFuncionario", codigoFuncionario=f["codigoFuncionario"], nome=f["nome"], endereco=f["endereco"], sexo=f["sexo"], datanascimento=f["datanascimento"])
-#        return template("exibirFuncionario", sql2=sql)
+    sql = 'SELECT * FROM funcionarios WHERE codigoFuncionario = "%s"' %codigo
+    c = dbfun.execute(sql)
+    fun = c.fetchone()
+    if fun:
+        return template('exibirFuncionario', codigoFuncionario=fun['codigoFuncionario'], nome=fun['nome'], endereco=fun['endereco'], sexo=fun['sexo'], datanascimento=fun['datanascimento'])
+    else:
+        return "Não há funcinário com este código."
     
 
 #Tela para deletar funcionario
@@ -69,17 +70,17 @@ def formDeletarFuncionario():
     '''
 
 @post("/deletar")
-def deletarFuncionario(db):
+def deletarFuncionario(dbfun):
     codigo = request.forms.get("codigo")
-    
-    sql = "SELECT * FROM funcionarios WHERE codigoFuncionario='%s'" %codigo
-    c = db.execute(sql)
-    if c.fetchone():
-        sql = "DELETE FROM funcionarios WHERE codigoFuncionario='%s'" %codigo
-        c = db.execute(sql)
-        return "Funcionário deletado."
-    else:
-        return "Não há funcinário com este código."
+#    
+#    sql = "SELECT * FROM funcionarios WHERE codigoFuncionario='%s'" %codigo
+#    c = dbfun.execute(sql)
+#    if c.fetchone():
+#        sql = "DELETE FROM funcionarios WHERE codigoFuncionario='%s'" %codigo
+#        c = dbfun.execute(sql)
+#        return "Funcionário deletado."
+#    else:
+#        return "Não há funcinário com este código."
 
 
 run(host="localhost", port=8007, debug=True)
